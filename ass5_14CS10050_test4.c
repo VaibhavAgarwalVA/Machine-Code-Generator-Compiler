@@ -1,37 +1,31 @@
 
-
-
-int good(int *a)
+int fact(int n)
 {
-    int b = 2, c = 3;
-
-    *a = b+c;
+   if(n==1)
+       return 1;
+   else
+       return(n*fact(n-1));
 }
 
-
-double **func ()
+int mult(int a,int b)
 {
-    double **a;
-    double *b, *c;
+  int product =0,i=0;
 
-    double aa = 5;
-
-
-    *b = aa;
-
-    return a;
+  if(i<a)
+  {
+    product = product + b;
+    i++;
+    mult(a,b);
+  }
+  return product;
 }
 
-
-char main()
+int main()
 {
-    int a = 5;
-    good(&a);
-
-    double c = 4.4, b = 6.9, *e;
-
-    *e = b;
-
-    return a+ b +c;
-
+  int num,f;
+  int prod;
+  int a=10,b=12;
+  f=fact(num);
+  prod = mult(a,b);
+  return 0;
 }

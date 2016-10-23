@@ -1,5 +1,3 @@
-// This test file primarily tests the statements contructs
-
 int gcd(int a, int b)
 {
     int mn;

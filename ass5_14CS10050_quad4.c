@@ -1,74 +1,97 @@
-0: t0 = 2
-1: t1 = 3
-2: b = t0
-3: c = t1
-4: t3 = b + c
-5: t2 = t4
-6: t5 = 5
-7: aa = t5
-8: t6 = t7
-9: return t8
-10: t9 = 5
-11: a = t9
-12: param t10
-13: call good 1
-14: t11 = 4.4
-15: t12 = 6.9
-16: c = t11
-17: b = t12
-18: t13 = t14
-19: t16 =  Int2Double(a)
-20: t15 = t16 + b
-21: t17 = t15 + c
-22: t18 =  Double2Char(t17)
-23: return t18
+0: t0 = 1
+1: t1 = 1
+2: if n ==t0 goto 6
+3: t1 = 0
+4: goto 9
+5: goto 16
+6: t2 = 1
+7: return t2
+8: goto 16
+9: t3 = 1
+10: t4 = n - t3
+11: param t4
+12: call fact 1
+13: t5 = n * fact
+14: return t5
+15: goto 16
+16: t6 = 0
+17: t7 = 0
+18: product = t6
+19: i = t7
+20: t8 = 1
+21: if i <a goto 25
+22: t8 = 0
+23: goto 33
+24: goto 33
+25: t9 = product + b
+26: product = t10
+27: t11 = i
+28: i = i + 1
+29: param a
+30: param b
+31: call mult 2
+32: goto 33
+33: return product
+34: t12 = 10
+35: t13 = 12
+36: a = t12
+37: b = t13
+38: param num
+39: call fact 1
+40: f = t14
+41: param a
+42: param b
+43: call mult 2
+44: prod = t15
+45: t16 = 0
+46: return t16
 ----------------SYMBOL TABLE----------------
 Name	Type		Size	Offset	InitVal
-good	function	0	8	null
-func	function	0	4	null
-main	function	0	1	null
+fact	function	0	8	null
+mult	function	0	12	null
+main	function	0	4	null
 --------------------------------------------
-----------------SYMBOL TABLE(func)----------------
+----------------SYMBOL TABLE(fact)----------------
 Name	Type		Size	Offset	InitVal
-retVal	double 	4	0	null
-a	double **		4	12	null
-b	double *		4	24	null
-c	double *		4	36	null
-t5	int		4	40	5
-aa	double		8	60	5
-t6	int		4	52	null
-t7		0	56	null
-t8		0	56	null
---------------------------------------------
-----------------SYMBOL TABLE(good)----------------
-Name	Type		Size	Offset	InitVal
-a	int		4	0	null
+n	int		4	0	null
 retVal	int		4	4	null
-t0	int		4	8	2
-t1	int		4	12	3
-b	int		4	24	2
-c	int		4	28	3
-t2	int		4	24	null
-t3	int		4	28	null
-t4		0	32	null
+t0	int		4	8	1
+t1	int		4	12	null
+t2	int		4	16	1
+fact	int		4	20	null
+t3	int		4	24	1
+t4	int		4	28	null
+t5	int		4	32	null
 --------------------------------------------
 ----------------SYMBOL TABLE(main)----------------
 Name	Type		Size	Offset	InitVal
-retVal	char		1	0	null
-t9	int		4	1	5
-a	int		4	13	5
-good	int		4	9	null
-t10	int		4	13	null
-t11	double		8	17	4.4
-t12	double		8	25	6.9
-c	double		8	49	4.4
-b	double		8	57	6.9
-e	double *		4	57	null
-t13	int		4	61	null
-t14		0	65	null
-t15	double		8	65	null
-t16	double		8	73	null
-t17	double		8	81	null
-t18	char		1	89	null
+retVal	int		4	0	null
+num	int		4	12	null
+f	int		4	16	null
+prod	int		4	20	null
+t12	int		4	16	10
+t13	int		4	20	12
+a	int		4	32	10
+b	int		4	36	12
+fact	int		4	32	null
+t14		0	36	null
+mult	int		4	36	null
+t15		0	40	null
+t16	int		4	40	0
+--------------------------------------------
+----------------SYMBOL TABLE(mult)----------------
+Name	Type		Size	Offset	InitVal
+a	int		4	0	null
+b	int		4	4	null
+retVal	int		4	8	null
+t6	int		4	12	0
+t7	int		4	16	0
+product	int		4	28	0
+i	int		4	32	0
+t8	int		4	28	null
+t9	int		4	32	null
+t10		0	36	null
+t11	int		4	36	null
+mult	int		4	40	null
 --------------------------------------------
 success

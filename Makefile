@@ -1,4 +1,4 @@
-a.out: lex.yy.c y.tab.c y.tab.h ass5_14CS10050_translator.h ass5_14CS10050_translator.cxx dec_test.c
+a.out: lex.yy.c y.tab.c y.tab.h ass5_14CS10050_translator.h ass5_14CS10050_translator.cxx
 	g++ lex.yy.c y.tab.c ass5_14CS10050_translator.cxx -lfl
 
 	#->>> Type "make run to generate output for all test files"
@@ -18,3 +18,4 @@ run:
 	./a.out < ass5_14CS10050_test2.c > ass5_14CS10050_quad2.c
 	./a.out < ass5_14CS10050_test3.c > ass5_14CS10050_quad3.c
 	./a.out < ass5_14CS10050_test4.c > ass5_14CS10050_quad4.c
+	./a.out < ass5_14CS10050_test5.c > ass5_14CS10050_quad5.c

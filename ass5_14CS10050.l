@@ -10,7 +10,7 @@ ID_ND [a-zA-Z_]
 
 ID ({ID_ND}({ID_ND}|{DIG})*)
 
-WS [ \n\t]
+WS  				[ \t\v\n\f]
 SIGN [+-]
 DIG_SEQ {DIG}+
 EXP_PART ([eE]{SIGN}?{DIG_SEQ})

@@ -3,88 +3,69 @@
 
 #include <bits/stdc++.h>
 
-using namespace std;
 #define SZ_CHAR  1
 #define SZ_INT   4
-#define SZ_DB    8
 #define SZ_PTR   4
+#define SZ_DB    8
+
+using namespace std;
+
 enum opcode {
-//Binary Assignment Instruction
-OP_PLUS = 1,
-OP_MINUS,
-OP_MULT,
-OP_DIVIDE,
-OP_MODULO,
-
-OP_SHIFT_LEFT,
-OP_SHIFT_RIGHT,
-
-OP_XOR,
-OP_AND,
-OP_OR,
-
-OP_LOGICAL_AND,
-OP_LOGICAL_OR,
-
-OP_LESS,
-OP_GREATER,
-OP_EQUAL,
-OP_NOT_EQUAL,
-OP_LESS_OR_EQUAL,
-OP_GREATER_OR_EQUAL,
-
-//Unary Assignment Instruction
-OP_UNARY_MINUS,
-OP_UNARY_PLUS,
-OP_COMPLEMENT,
-OP_NOT,
-//Copy Assignment Instruction
-OP_ASSIGN,
-//Unconditional Jump
-OP_GOTO,
-//Conditional Jump
-OP_IF_LESS,
-OP_IF_GREATER,
-OP_IF_LESS_OR_EQUAL,
-OP_IF_GREATER_OR_EQUAL,
-OP_IF_EQUAL,
-OP_IF_NOT_EQUAL,
-OP_IF_EXPRESSION,
-OP_IF_NOT_EXPRESSION,
-// hardware defined conversions 
-OP_C2I,
-OP_C2D,
-OP_I2C,
-OP_D2C,
-OP_I2D,
-OP_D2I,
-//Procedure Call
-OP_PARAM,
-OP_CALL,
-//Return Value
-OP_RETURN, 
-//Array Indexing Opcodes to be inserted.
-
-OP_ARRAY_INDEX_FROM,
-OP_ARRAY_INDEX_TO,
-//Address and Pointer Assignment Instructions
-OP_REFERENCE,
-OP_DEREFERENCE,
-OP_POINTER_ASSIGNMENT
+	OP_PLUS = 1,
+	OP_MINUS,
+	OP_MULT,
+	OP_DIVIDE,
+	OP_MODULO,
+	OP_SHIFT_LEFT,
+	OP_SHIFT_RIGHT,
+	OP_XOR,
+	OP_AND,
+	OP_OR,
+	OP_LOGICAL_AND,
+	OP_LOGICAL_OR,
+	OP_LESS,
+	OP_GREATER,
+	OP_EQUAL,
+	OP_NOT_EQUAL,
+	OP_LESS_OR_EQUAL,
+	OP_GREATER_OR_EQUAL,
+	OP_UNARY_MINUS,
+	OP_UNARY_PLUS,
+	OP_COMPLEMENT,
+	OP_NOT,
+	OP_ASSIGN,
+	OP_GOTO,
+	OP_IF_LESS,
+	OP_IF_GREATER,
+	OP_IF_LESS_OR_EQUAL,
+	OP_IF_GREATER_OR_EQUAL,
+	OP_IF_EQUAL,
+	OP_IF_NOT_EQUAL,
+	OP_IF_EXPRESSION,
+	OP_IF_NOT_EXPRESSION,
+	OP_C2I,
+	OP_C2D,
+	OP_I2C,
+	OP_D2C,
+	OP_I2D,
+	OP_D2I,
+	OP_PARAM,
+	OP_CALL,
+	OP_RETURN, 
+	OP_ARRAY_INDEX_FROM,
+	OP_ARRAY_INDEX_TO,
+	OP_REFERENCE,
+	OP_DEREFERENCE,
+	OP_POINTER_ASSIGNMENT
 };
 
-void get(string x); // stupid test function
+void get(string x); 
 class symtype;
 class exxp;
 class quad;
 class symdata;
-// union symval
-// {
-//     char cval;
-//     int ival;
-//     double dval;
-//     void* pval;
-// };
+
+
 class symval                            // used for storing the init_val
 {
 public:
@@ -97,19 +78,16 @@ public:
         cval = a;
         dval = a;
         ival = a;
-        //pval = a;
     }
     void setval(char a) {
         cval = a;
         dval = a;
         ival = a;
-        //pval = a;
     }
     void setval(double a) {
         cval = a;
         dval = a;
         ival = a;
-        //pval = (void*)a;
     }
 };
 enum basic_type{                        // an enum of types
@@ -139,8 +117,6 @@ public:
         nextinstr = 0;
     }
     void emit(string res, string arg1, opcode op, string arg2 = "");
-    //template <typename T>
-    //void emit(string res, T constant, opcode unary_op);
     void backpatch(list<int> a, int index);
     void emit(string res, int constant, opcode unary_op);
     void emit(string res, double constant, opcode unary_op);
@@ -156,8 +132,6 @@ public:
     vector<int> alist;
     int pc;
     basic_type base_t;
-    // int array_size;
-    // symtype *elem_type; 
 };
 
 
@@ -165,8 +139,6 @@ class exxp{                                                     // class for sto
 public:
     list<int> truelist, falselist, nextlist;
     int instr;
-    // string id;
-    //symtype typ;
     string loc;
     basic_type b_type;
     int fold;                                                   // used to determine the dimention of array being parsed
@@ -176,10 +148,6 @@ public:
         fold = 0;
         folder = NULL;
     }
-    //lval lv;
-    //symval val;
-    //int size;
-    //symdata * array;
 };
 
 
@@ -228,16 +196,7 @@ public:
 list<int> makelist(int index);
 list<int> merge(list<int> a, list<int> b);
 
-/*
-class lval
-{
-    string var;
-    basic_type l_type;
-    int pc;
-    int idx;
-};
-*/
-
-
-
 #endif /* ASS5_14CS10050_TRANSLATOR_H */
+
+//
+//

@@ -2,7 +2,9 @@
 
 void get(string x)
 {
-    cout<<"--"<<x<<endl;
+    cout<<"**";
+    cout<<x;
+    cout<<endl;
 }
 
 void quad::print()
@@ -39,7 +41,6 @@ void quad::print()
         cout<<result<<" = ";
         switch(op)
         {
-            
             //Unary Assignment Instruction
             case OP_UNARY_MINUS : cout<<"-"; break;
             case OP_UNARY_PLUS : cout<<"+"; break;
@@ -105,26 +106,6 @@ void quad::print()
     {
         cout<<result<<" = "<<arg1<<"( op = "<<op<<" )"<<arg2<<endl;
     }
-    // switch(op)
-    // {
-            // hardware defined conversions
-            
-        
-    //     //Procedure Call
-    //     OP_PARAM,
-    //     OP_CALL,
-    //     //Return Value
-    //     OP_RETURN, 
-    //     //Array Indexing Opcodes to be inserted.
-
-    //     OP_ARRAY_INDEX_FROM,
-    //     OP_ARRAY_INDEX_TO,
-    //     //Address and Pointer Assignment Instructions
-    //     OP_REFERENCE,
-    //     OP_DEREFERENCE,
-    //     OP_POINTER_ASSIGNMENT
-    // }
-
 }
 
 void q_array::emit(string res, string arg1, opcode op, string arg2)
@@ -135,11 +116,6 @@ void q_array::emit(string res, string arg1, opcode op, string arg2)
     to_insert.arg1 = arg1;
     to_insert.arg2 = arg2;
     array.push_back(to_insert); nextinstr++;
-    //array[nextinstr-1].print();
-    // if(op != OP_GOTO)
-    //     cout<<res<<"= "<<arg1<<" (op = "<<op<<" )"<<arg2<<endl;
-    // else
-    //     cout<<"if "<<arg1<<"( relop = "<<op" )"<<arg2<<" goto "<<result<<endl;
 }
 
 void q_array::emit(string res, int constant, opcode unary_op)
@@ -149,9 +125,7 @@ void q_array::emit(string res, int constant, opcode unary_op)
     to_insert.result = res;
     stringstream ss; ss<<constant;
     ss>>to_insert.arg1;
-    array.push_back(to_insert); nextinstr++;   
-    //array[nextinstr-1].print(); 
-    //cout<<res<<" (op = "<<unary_op<<" )"<<constant<<endl;
+    array.push_back(to_insert); nextinstr++;
     
 }
 void q_array::emit(string res, double constant, opcode unary_op)
@@ -162,9 +136,6 @@ void q_array::emit(string res, double constant, opcode unary_op)
     stringstream ss; ss<<constant;
     ss>>to_insert.arg1;
     array.push_back(to_insert); nextinstr++;
-    //array[nextinstr-1].print();
-    
-    //cout<<res<<" (op = "<<unary_op<<" )"<<constant<<endl;
     
 }
 void q_array::emit(string res, char constant, opcode unary_op)
@@ -175,8 +146,6 @@ void q_array::emit(string res, char constant, opcode unary_op)
     stringstream ss; ss<<constant;
     ss>>to_insert.arg1;
     array.push_back(to_insert); nextinstr++;
-    //array[nextinstr-1].print();
-    //cout<<res<<" (op = "<<unary_op<<" )"<<constant<<endl;
 }
 void q_array::backpatch(list<int> a, int index)
 {
@@ -189,7 +158,6 @@ void q_array::backpatch(list<int> a, int index)
 
 void q_array::convInt2Bool(exxp* res)
 {
-    //cout<<"\\convInt2Bool"<<endl;
     if(res->b_type == typ_bool) return;
     backpatch(res->truelist,nextinstr);
     backpatch(res->falselist,nextinstr);
@@ -199,8 +167,6 @@ void q_array::convInt2Bool(exxp* res)
     res->truelist = makelist(nextinstr);
     emit("","",OP_GOTO,"");//goto  
     res->b_type = typ_bool;
-    
-    //cout<<"\\--convInt2Bool"<<endl;
     return;
 }
 void q_array::conv2type(exxp* t, exxp *res, basic_type bt)
@@ -224,7 +190,6 @@ void q_array::conv2type(exxp* t, exxp *res, basic_type bt)
 }
 void q_array::conv2type(string t,basic_type bt, string f, basic_type from)
 {
-    //cout<<"convert "<<f<<"-"<<from<<" to "<<t<<"-"<<bt<<endl;
     if(from == bt) return;
     else if(from == typ_double)
     {
@@ -266,7 +231,6 @@ string symtab::gentemp(basic_type bt)
     _symtab[ret]->size = tempsize;
     _symtab[ret]->init_val = NULL;
     offset += tempsize;
-    //cout<<"creating "<<ret<< "of size = "<<tempsize<<endl;
     return ret;
 }
 symdata* symtab::lookup(string var, basic_type bt, int pc)
@@ -334,14 +298,12 @@ void symtab::print()
         {
             vector<int> tmp =  t->type.alist;
             int sz = tmp.size();
-            //cout<<"[";
             for(int i = 0; i<sz; i++) cout<<"["<<tmp[i]<<"]";
-            //cout<<"]";
         }        
         cout<<"\t";
 
         cout<<t->size<<"\t"<<t->offset<<"\t";
-        //cout<<"1"<<endl;
+        
         if(t->init_val == NULL ) cout<<"null";
         else
         {
@@ -350,8 +312,6 @@ void symtab::print()
             else if(t->type.b_type == typ_double) cout<<t->init_val->dval;
             else cout<<"N/A";
         }
-        // cout<<1<<endl;
-        //cout<<"2"<<endl;
         cout<<endl;
     }
 }

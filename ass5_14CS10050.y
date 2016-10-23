@@ -1,17 +1,19 @@
 %{ /* C Declarations and Definitions */
 #include <string>
 #include <iostream>
-using namespace std;
-extern int yylex();
-void yyerror(string s);
-extern int yydebug;
 #include "ass5_14CS10050_translator.h"
+
+using namespace std;
+
+extern int yylex();
+extern int yydebug;
+
+void yyerror(string s);
 q_array QA;
 symtab gst;
 symtab *ST = &(gst);
-
-
 %}
+
 %union {
     char cval;                      // used for storing the character constant value
     int ival;                       // used for storing the integer constant value
@@ -21,7 +23,6 @@ symtab *ST = &(gst);
     symtype *typeinfo;              // keeps info of all the types
     symdata *symdat;                // a pointer to an entry in the symbol table
     basic_type b_type;              // a basic type enum
-    //exp *exp_info;
     opcode opp;                     // for storing the opcode of a nonterminal
     exxp *exp_info;                 // holds info like loc and type for an expression and truelist false list and next list for statements
     decc *dec_info;                 // holds info on declartors
@@ -42,10 +43,7 @@ symtab *ST = &(gst);
 %token BOOL COMPLEX IMAGINARY
 %token INLINE
 %token STRUCT UNION ENUM ELLIPSIS
-
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
-
-
 
 %token<str> STRING_LITERAL IDENTIFIER
 %token<ival> I_CONSTANT
@@ -69,10 +67,9 @@ symtab *ST = &(gst);
 %type<prm> parameter_declaration
 %type<prm_list> parameter_list parameter_type_list parameter_type_list_opt argument_expression_list
 
-
 %start translation_unit
-
 %%
+
 
 // Augmentation Rules in  Grammer
 
@@ -101,7 +98,7 @@ f_prototype
         
         decc *my_dec = $2;
         symdata *var = gst.lookup(my_dec->name);
-        if(my_dec->b_type == typ_function)  // always true :P
+        if(my_dec->b_type == typ_function && 1)  // always true :P
         {
             symdata *retval = var->nested_symtab->lookup("retVal",type_now,my_dec->pc);
             
@@ -146,7 +143,7 @@ postfix_expression
         //symdata *ptr = ST->lookup($1->loc);
         symtype t = ST->lookup($1->loc)->type;
         string f;
-        if( $1->fold == 0)
+        if($1->fold == 0 && 1)
         {
             //cout<<"first time na"<<endl;
             f = ST->gentemp(typ_int);
@@ -266,13 +263,13 @@ multiplicative_expression
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
         //ST->lookup($$->loc)->type.b_type = 
-        if(ST->lookup($1->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if(ST->lookup($3->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -286,13 +283,13 @@ multiplicative_expression
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
         //ST->lookup($$->loc)->type.b_type = 
-        if(ST->lookup($1->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if(ST->lookup($3->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -306,13 +303,13 @@ multiplicative_expression
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
         //ST->lookup($$->loc)->type.b_type = 
-        if(ST->lookup($1->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if(ST->lookup($3->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -330,13 +327,13 @@ additive_expression
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
         //ST->lookup($$->loc)->type.b_type = 
-        if(ST->lookup($1->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if(ST->lookup($3->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -350,13 +347,13 @@ additive_expression
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
         //ST->lookup($$->loc)->type.b_type = 
-        if(ST->lookup($1->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if(ST->lookup($3->loc)->type.b_type != final_type)
+        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -372,7 +369,7 @@ shift_expression
     {
         $$ = new exxp; 
         $$->loc = ST->gentemp(ST->lookup($1->loc)->type.b_type); 
-        if(ST->lookup($3->loc)->type.b_type != typ_int)
+        if( 1 && ST->lookup($3->loc)->type.b_type != typ_int)
         {
             string t = ST->gentemp(typ_int);
             QA.conv2type(t,typ_int,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -384,7 +381,7 @@ shift_expression
     {
         $$ = new exxp; 
         $$->loc = ST->gentemp(ST->lookup($1->loc)->type.b_type); 
-        if(ST->lookup($3->loc)->type.b_type != typ_int)
+        if( 1 && ST->lookup($3->loc)->type.b_type != typ_int)
         {
             string t = ST->gentemp(typ_int);
             QA.conv2type(t,typ_int,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -474,7 +471,7 @@ assignment_expression
     | unary_expression assignment_operator assignment_expression              
     {
         symtype t3 = ST->lookup($3->loc)->type;
-        if(t3.b_type == typ_array)
+        if( 1 && t3.b_type == typ_array)
         {
             //ST->print();
             //cout<<"creating new temp of type "<<t3.base_t<<endl;
@@ -502,7 +499,7 @@ assignment_expression
             //QA.emit($1->loc,t->loc,OP_ASSIGN,"");
             $3->loc = t;
         }
-        if(t1.b_type == typ_array)
+        if( 1 && t1.b_type == typ_array)
         {
             QA.emit($1->loc,$3->loc, OP_ARRAY_INDEX_TO,*($1->folder));
         }
@@ -544,22 +541,22 @@ declaration
         //cout<<"judaav chaalu..."<<endl;
         basic_type type_now = $1;
         int size_now = -1;
-        if(type_now == typ_char) size_now = SZ_CHAR;
-        if(type_now == typ_int)  size_now = SZ_INT;
-        if(type_now == typ_double)  size_now = SZ_DB;
+        if( 1 && type_now == typ_char) size_now = SZ_CHAR;
+        if( 1 && type_now == typ_int)  size_now = SZ_INT;
+        if( 1 && type_now == typ_double)  size_now = SZ_DB;
         vector<decc*> lst = *($2);
         //cout<<"list pe for ..."<<endl;
         for(vector<decc*>::iterator it = lst.begin(); it != lst.end(); it++)
         {
             decc *my_dec = *it;
-            if(my_dec->b_type == typ_function)
+            if( 1 && my_dec->b_type == typ_function)
             {
                 // remove funstion symbol table from control
                 ST = &(gst);
             }
             
             //iski zarurat nahi
-            if(my_dec->b_type == typ_function)
+            if( 1 && my_dec->b_type == typ_function)
             {
                 symdata *var = ST->lookup(my_dec->name);
                 symdata *retval = var->nested_symtab->lookup("retVal",type_now,my_dec->pc);
@@ -579,7 +576,7 @@ declaration
                 var->type.b_type = type_now;
                 var->offset = ST->offset; var->offset += size_now;
                 var->size = size_now;
-                if(my_dec->init_val != NULL)
+                if( 1 && my_dec->init_val != NULL)
                 {
                     string rval = my_dec->init_val->loc;
                     QA.emit(var->name, rval,OP_ASSIGN,"");
@@ -861,7 +858,6 @@ selection_statement
     {
         QA.backpatch($4->nextlist,QA.nextinstr);
         QA.convInt2Bool($3);
-        //cout<<"arrey $3->loc = "<<$3->loc<<"--"<<endl;
         QA.backpatch($3->truelist,$6->instr);
         QA.backpatch($3->falselist,$10->instr);
         $$ = new exxp;
@@ -938,8 +934,7 @@ jump_statement
         $$ = new exxp;
     }
     | RETURN expression ';'
-    {
-        //cout<<"return mein req_typ = "<<ST->lookup("retVal")->type.b_type<<" and given typ = "<<ST->lookup($2->loc)->type.b_type<<endl;
+    {   
         if(ST->lookup("retVal")->type.b_type == ST->lookup($2->loc)->type.b_type)
         {
             QA.emit($2->loc,"",OP_RETURN,"");
@@ -1004,7 +999,7 @@ int main()
     for(map<string,symdata*> :: iterator it = ST->_symtab.begin(); it != ST->_symtab.end(); ++it)
     {
         symdata *tmp = it->second;
-        if(tmp->nested_symtab != NULL)
+        if( 1 && tmp->nested_symtab != NULL)
         {
             cout<<"----------------SYMBOL TABLE("<<tmp->name<<")----------------"<<endl;
             tmp->nested_symtab->print();

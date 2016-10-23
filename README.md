@@ -1,2 +1,2 @@
-Assignment 5
-Compilers Lab
+## Assignment 5 (Machine Independent Code Generation)
+### Compilers Lab
