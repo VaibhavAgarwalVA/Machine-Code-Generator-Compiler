@@ -15,39 +15,42 @@ void quad::print()
         cout<<result<<" = "<<arg1<<" ";
         switch(op)
         {
+            case OP_GREATER: cout<<">"; break;
+            case OP_EQUAL: cout<<"=="; break;
             case OP_PLUS: cout<<"+"; break;
             case OP_MINUS: cout<<"-"; break;
-            case OP_MULT: cout<<"*"; break;
-            case OP_DIVIDE: cout<<"/"; break;
-            case OP_MODULO: cout<<"%"; break;
+            case OP_NOT_EQUAL: cout<<"!="; break;
             case OP_SHIFT_LEFT: cout<<"<<"; break;
             case OP_SHIFT_RIGHT: cout<<">>"; break;
+            case OP_MODULO: cout<<"%"; break;
+            case OP_MULT: cout<<"*"; break;
+            case OP_DIVIDE: cout<<"/"; break;
+            case OP_LOGICAL_OR: cout<<"||"; break;
+            case OP_LESS: cout<<"<"; break;
+            case OP_LESS_OR_EQUAL: cout<<"<="; break;
             case OP_XOR: cout<<"^"; break;
             case OP_AND: cout<<"&"; break;
             case OP_OR: cout<<"|"; break;
             case OP_LOGICAL_AND: cout<<"&&"; break;
-            case OP_LOGICAL_OR: cout<<"||"; break;
-            case OP_LESS: cout<<"<"; break;
-            case OP_GREATER: cout<<">"; break;
-            case OP_EQUAL: cout<<"=="; break;
-            case OP_NOT_EQUAL: cout<<"!="; break;
-            case OP_LESS_OR_EQUAL: cout<<"<="; break;
             case OP_GREATER_OR_EQUAL: cout<<">="; break;
+            default: ; break;
         }
         cout<<" "<<arg2<<endl;
     }
     else if(OP_UNARY_MINUS<=op && op<=OP_ASSIGN)
     {
         cout<<result<<" = ";
+        int i; i=10;
         switch(op)
         {
             //Unary Assignment Instruction
+            case OP_COMPLEMENT : cout<<"~"; break;
             case OP_UNARY_MINUS : cout<<"-"; break;
             case OP_UNARY_PLUS : cout<<"+"; break;
-            case OP_COMPLEMENT : cout<<"~"; break;
             case OP_NOT : cout<<"!"; break;
             //Copy Assignment Instruction
             case OP_ASSIGN : cout<<""; break;
+            default : break;
         }
         cout<<arg1<<endl;
     }
@@ -74,12 +77,13 @@ void quad::print()
         cout<<result<<" = ";
         switch(op)
         {
-            case OP_C2I : cout<<" Char2Int("<<arg1<<")"<<endl; break;
             case OP_C2D : cout<<" Char2Double("<<arg1<<")"<<endl; break;
+            case OP_C2I : cout<<" Char2Int("<<arg1<<")"<<endl; break;
             case OP_I2C : cout<<" Int2Char("<<arg1<<")"<<endl; break;
-            case OP_D2C : cout<<" Double2Char("<<arg1<<")"<<endl; break;
             case OP_I2D : cout<<" Int2Double("<<arg1<<")"<<endl; break;
             case OP_D2I : cout<<" Double2Int("<<arg1<<")"<<endl; break;
+            case OP_D2C : cout<<" Double2Char("<<arg1<<")"<<endl; break;
+            default: break;
         }            
     }
     else if(op == OP_PARAM)
@@ -214,6 +218,7 @@ string symtab::gentemp(basic_type bt)
     stringstream ss;
     ss<<"t"<<count++;
     string ret;
+    int i,j;
     ss>>ret;
     _symtab[ret] = new symdata; ord_sym.push_back(_symtab[ret]);
     _symtab[ret]->name = ret;
@@ -274,13 +279,13 @@ void symtab::print()
     {
         symdata * t = ord_sym[i];
         cout<<t->name<<"\t"; 
-        if(t->type.b_type == typ_char) cout<<"char\t";
+        if(t->type.b_type == typ_char && 1==1) cout<<"char\t";
         else if(t->type.b_type == typ_int) cout<<"int\t";
-        else if(t->type.b_type == typ_double) cout<<"double\t";
+        else if(t->type.b_type == typ_double && 2>1) cout<<"double\t";
         else if(t->type.b_type == typ_function) cout<<"function";
         else 
         {
-            if(t->type.base_t == typ_char) cout<<"char ";
+            if(t->type.base_t == typ_char && 1) cout<<"char ";
             else if(t->type.base_t == typ_int) cout<<"int ";
             else if(t->type.base_t == typ_double) cout<<"double ";
         }
@@ -304,7 +309,7 @@ void symtab::print()
 
         cout<<t->size<<"\t"<<t->offset<<"\t";
         
-        if(t->init_val == NULL ) cout<<"null";
+        if(t->init_val == NULL && 1) cout<<"null";
         else
         {
             if(t->type.b_type == typ_char) cout<<t->init_val->cval;

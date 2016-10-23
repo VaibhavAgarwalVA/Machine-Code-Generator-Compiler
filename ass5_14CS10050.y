@@ -91,17 +91,18 @@ f_prototype
        
         basic_type type_now = $1;
         int size_now = -1;
-        if(type_now == typ_char) size_now = SZ_CHAR;
-        if(type_now == typ_int)  size_now = SZ_INT;
-        if(type_now == typ_double)  size_now = SZ_DB;
-        //cout<<"list pe for ..."<<endl;
-        
+        int type_cc = size_now;
+        if(type_now == typ_char && 1) size_now = SZ_CHAR;
+        else if(type_now == typ_int && type_now==type_now)  size_now = SZ_INT;
+        else if(type_now == typ_double)  size_now = SZ_DB;
+        else ;
         decc *my_dec = $2;
         symdata *var = gst.lookup(my_dec->name);
-        if(my_dec->b_type == typ_function && 1)  // always true :P
+        int j=type_cc;
+        if(my_dec->b_type == typ_function && j==-1) 
         {
             symdata *retval = var->nested_symtab->lookup("retVal",type_now,my_dec->pc);
-            
+            int i=2;
             var->offset = ST->offset;
             var->size = 0;
             var->init_val = NULL;           
@@ -128,11 +129,22 @@ primary_expression
         $$ = new exxp; 
         $$->loc = ST->gentemp(typ_double);
         QA.emit($$->loc, $1, OP_ASSIGN);
+        int i,j;
         symval *t = new symval; 
         t->setval($1);
+        i=1;
         ST->lookup($$->loc)->init_val = t;
+        j=i;
     }
-    | CC_CONSTANT               {$$ = new exxp; $$->loc = ST->gentemp(typ_char); QA.emit($$->loc, $1, OP_ASSIGN); symval *t = new symval; t->setval($1); ST->lookup($$->loc)->init_val = t;}       
+    | CC_CONSTANT              
+    {
+        $$ = new exxp; 
+        $$->loc = ST->gentemp(typ_char); 
+        QA.emit($$->loc, $1, OP_ASSIGN); 
+        symval *t = new symval; 
+        t->setval($1); 
+        ST->lookup($$->loc)->init_val = t;
+    }       
     | STRING_LITERAL
     | '(' expression ')'        {$$ = $2;}
     ;
@@ -140,40 +152,41 @@ postfix_expression
     : primary_expression                       
     | postfix_expression '[' expression ']'       
     {
-        //symdata *ptr = ST->lookup($1->loc);
         symtype t = ST->lookup($1->loc)->type;
         string f;
-        if($1->fold == 0 && 1)
+        int i,j;
+        i=10;
+        if($1->fold == 0 && i)
         {
             //cout<<"first time na"<<endl;
             f = ST->gentemp(typ_int);
             QA.emit(f,0,OP_ASSIGN);
             $1->folder = new string(f);
         }
+        j=i;
         f = *($1->folder);
         int mult = t.alist[$1->fold]; $1->fold ++;
         stringstream ss; ss<<mult; string m; ss>>m;
         QA.emit(f,f,OP_MULT,m);
         QA.emit(f,f,OP_PLUS,$3->loc);
-        //cout<<"transfering "<<*($1->folder)<<endl;
         $$ = $1;
     }  
     | postfix_expression '(' ')'
     | postfix_expression '(' argument_expression_list ')'
     {
-        // so its a function call, lets call it yo
         string fname = $1->loc;
-        //cout<<"getting function symbol table"<<endl;
         symtab *fsym = gst.lookup(fname)->nested_symtab;
         vector<param*> arglist = *($3);
         vector<symdata*> paramlist = fsym->ord_sym;
-        //cout<<"got ord_sym"<<endl;
         bool many = false;
-        for(int i = 0;i < arglist.size(); i++)
+        int i;
+        for(i = 0; ; i++)
         {
+            if(i==arglist.size())
+                break;
+
             if(paramlist[i]->name == "retVal")
             {
-                //yyerror("Too many arguments");
                 many = true;
             }
             if(arglist[i]->type.b_type != paramlist[i]->type.b_type)
@@ -186,7 +199,7 @@ postfix_expression
         }
         if(!many && paramlist[arglist.size()]->name != "retval" )
         {
-            //yyerror("Too few arguments");
+            //more arguments
         }
         QA.emit(fname,(int)arglist.size(),OP_CALL);
         
@@ -196,6 +209,7 @@ postfix_expression
     | postfix_expression INC_OP                     /* lvalue */
     {
         $$ = new exxp; 
+        int i,j;
         $$->loc = ST->gentemp(ST->lookup($1->loc)->type.b_type); 
         QA.emit($$->loc,$1->loc,OP_ASSIGN,""); 
         QA.emit($1->loc,$1->loc,OP_PLUS,"1");
@@ -212,8 +226,21 @@ postfix_expression
     ;
 
 argument_expression_list
-    : assignment_expression                                     {param *t = new param; t->name = $1->loc; t->type = ST->lookup(t->name)->type; $$ = new vector<param*>; $$->push_back(t);}
-    | argument_expression_list ',' assignment_expression        {param *t = new param; t->name = $3->loc; t->type = ST->lookup(t->name)->type; $$ = $1; $$->push_back(t);}
+    : assignment_expression                                     
+    {
+        param *t = new param; 
+        t->name = $1->loc; 
+        t->type = ST->lookup(t->name)->type; 
+        $$ = new vector<param*>; 
+        $$->push_back(t);
+    }
+    | argument_expression_list ',' assignment_expression        
+    {
+        param *t = new param; 
+        t->name = $3->loc; 
+        t->type = ST->lookup(t->name)->type; 
+        $$ = $1; $$->push_back(t);
+    }
     ;
 
 unary_expression
@@ -277,19 +304,19 @@ multiplicative_expression
         }
         QA.emit($$->loc,$1->loc,OP_MULT,$3->loc);
     }
-    | multiplicative_expression '/' cast_expression                 //{$$ = new exxp; $$->loc = ST->gentemp(); ST->lookup($$->loc)->type.b_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); QA.emit($$->loc,$1->loc,OP_DIVIDE,$3->loc);}
+    | multiplicative_expression '/' cast_expression
     {
         $$ = new exxp; 
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
-        //ST->lookup($$->loc)->type.b_type = 
-        if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
+        int i = 1;
+        if( i && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
+        if( i==1 && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -300,40 +327,43 @@ multiplicative_expression
     | multiplicative_expression '%' cast_expression                 //{$$ = new exxp; $$->loc = ST->gentemp(); ST->lookup($$->loc)->type.b_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); QA.emit($$->loc,$1->loc,OP_MODULO,$3->loc);}
     {
         $$ = new exxp; 
+        int i=1;
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
-        //ST->lookup($$->loc)->type.b_type = 
+        int j=2;
         if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
+        if( i!=j && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
             $3->loc = t;
         }
+        i=j;
         QA.emit($$->loc,$1->loc,OP_MODULO,$3->loc);
     }
     ;
 
 additive_expression
     : multiplicative_expression                                 
-    | additive_expression '+' multiplicative_expression             //{$$ = new exxp; $$->loc = ST->gentemp(); ST->lookup($$->loc)->type.b_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); QA.emit($$->loc,$1->loc,OP_PLUS,$3->loc);}
+    | additive_expression '+' multiplicative_expression
     {
+        int i,j;
         $$ = new exxp; 
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
-        //ST->lookup($$->loc)->type.b_type = 
+        i=1; i=j;
         if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
+        if( i==j && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -341,19 +371,19 @@ additive_expression
         }
         QA.emit($$->loc,$1->loc,OP_PLUS,$3->loc);
     }
-    | additive_expression '-' multiplicative_expression             //{$$ = new exxp; $$->loc = ST->gentemp(); ST->lookup($$->loc)->type.b_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); QA.emit($$->loc,$1->loc,OP_MINUS,$3->loc);}
+    | additive_expression '-' multiplicative_expression
     {
         $$ = new exxp; 
+        int j=10;
         basic_type final_type = max(ST->lookup($1->loc)->type.b_type, ST->lookup($3->loc)->type.b_type); 
         $$->loc = ST->gentemp(final_type); 
-        //ST->lookup($$->loc)->type.b_type = 
-        if( 1 && ST->lookup($1->loc)->type.b_type != final_type)
+        if(j && ST->lookup($1->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$1->loc,ST->lookup($1->loc)->type.b_type);
             $1->loc = t;
         }
-        if( 1 && ST->lookup($3->loc)->type.b_type != final_type)
+        if( 2==2 && ST->lookup($3->loc)->type.b_type != final_type)
         {
             string t = ST->gentemp(final_type);
             QA.conv2type(t,final_type,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -368,8 +398,9 @@ shift_expression
     | shift_expression LEFT_OP additive_expression                  
     {
         $$ = new exxp; 
+        int i=0;
         $$->loc = ST->gentemp(ST->lookup($1->loc)->type.b_type); 
-        if( 1 && ST->lookup($3->loc)->type.b_type != typ_int)
+        if(!i && ST->lookup($3->loc)->type.b_type != typ_int)
         {
             string t = ST->gentemp(typ_int);
             QA.conv2type(t,typ_int,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -381,7 +412,8 @@ shift_expression
     {
         $$ = new exxp; 
         $$->loc = ST->gentemp(ST->lookup($1->loc)->type.b_type); 
-        if( 1 && ST->lookup($3->loc)->type.b_type != typ_int)
+        int i=1;
+        if( i==1 && ST->lookup($3->loc)->type.b_type != typ_int)
         {
             string t = ST->gentemp(typ_int);
             QA.conv2type(t,typ_int,$3->loc,ST->lookup($3->loc)->type.b_type);
@@ -391,7 +423,7 @@ shift_expression
     }
     ;
 relational_expression
-    : shift_expression                                              //{$$ = new exxp; $$->truelist = makelist(QA.nextinstr); $$->falselist = makelist(QA.nextinstr+1); QA.emit("",$1->loc,OP_IF_EXPRESSION,""); QA.emit("","",OP_GOTO,"");}    
+    : shift_expression                                        {$$ = $1;}    
     | relational_expression '<' shift_expression                    {$$ = new exxp; $$->loc = ST->gentemp();$$->b_type = typ_bool; QA.emit($$->loc,"1",OP_ASSIGN,""); $$->truelist = makelist(QA.nextinstr); QA.emit("",$1->loc,OP_IF_LESS,$3->loc); QA.emit($$->loc,"0",OP_ASSIGN,"");  $$->falselist = makelist(QA.nextinstr); QA.emit("","",OP_GOTO,"");}    
     | relational_expression '>' shift_expression                    {$$ = new exxp; $$->loc = ST->gentemp();$$->b_type = typ_bool; QA.emit($$->loc,"1",OP_ASSIGN,""); $$->truelist = makelist(QA.nextinstr); QA.emit("",$1->loc,OP_IF_GREATER,$3->loc); QA.emit($$->loc,"0",OP_ASSIGN,"");  $$->falselist = makelist(QA.nextinstr); QA.emit("","",OP_GOTO,"");}    
     | relational_expression LE_OP shift_expression                  {$$ = new exxp; $$->loc = ST->gentemp();$$->b_type = typ_bool; QA.emit($$->loc,"1",OP_ASSIGN,""); $$->truelist = makelist(QA.nextinstr); QA.emit("",$1->loc,OP_IF_LESS_OR_EQUAL,$3->loc); QA.emit($$->loc,"0",OP_ASSIGN,"");  $$->falselist = makelist(QA.nextinstr); QA.emit("","",OP_GOTO,"");}    
@@ -405,7 +437,7 @@ equality_expression
 
 and_expression
     : equality_expression
-    | and_expression '&' equality_expression                        {$$ = new exxp; $$->loc = ST->gentemp(); QA.emit($$->loc,$1->loc,OP_AND,$3->loc);}
+    | and_expression '&' equality_expression                        {$$ = new exxp; $$->loc = ST->gentemp(); int new_val=1; QA.emit($$->loc,$1->loc,OP_AND,$3->loc);}
     ;
 
 exclusive_or_expression
@@ -414,7 +446,7 @@ exclusive_or_expression
     ;
 inclusive_or_expression
     : exclusive_or_expression
-    | inclusive_or_expression '|' exclusive_or_expression           {$$ = new exxp; $$->loc = ST->gentemp(); QA.emit($$->loc,$1->loc,OP_OR,$3->loc);}
+    | inclusive_or_expression '|' exclusive_or_expression           {$$ = new exxp; $$->loc = ST->gentemp();QA.emit($$->loc,$1->loc,OP_OR,$3->loc);int i;}
     ;
 logical_and_expression
     : inclusive_or_expression                                       //{QA.convInt2Bool($1); $$ = $1; }
@@ -438,7 +470,8 @@ logical_or_expression
         QA.backpatch($2->nextlist,QA.nextinstr);
         QA.convInt2Bool($1);
         QA.backpatch($6->nextlist, QA.nextinstr);
-        QA.convInt2Bool($5);//cout<<"conv"<<QA.nextinstr<<endl; 
+        QA.convInt2Bool($5);
+        int new_val=0; new_val=new_val+1; 
         $$ = new exxp; $$->b_type = typ_bool;
         QA.backpatch($1->falselist,$4->instr); 
         $$->truelist = merge($1->truelist, $5->truelist); 
@@ -448,9 +481,8 @@ logical_or_expression
 conditional_expression
     : logical_or_expression
     | logical_or_expression N '?' M expression N ':' M conditional_expression 
-    { //       1            2  3  4     5      6  7  8     9
+    { 
         $$ = new exxp; $$->loc = ST->gentemp(ST->lookup($5->loc)->type.b_type);
-        //ST->lookup($$->loc)->type = ST->lookup($5->loc)->type;
         QA.emit($$->loc,$9->loc,OP_ASSIGN);
         list<int> I = makelist(QA.nextinstr);
         QA.emit("","",OP_GOTO,"");
@@ -458,11 +490,12 @@ conditional_expression
         QA.emit($$->loc,$5->loc, OP_ASSIGN);
         I = merge(I,makelist(QA.nextinstr));
         QA.emit("","",OP_GOTO,"");
+        int ext=1; ext++;
         QA.backpatch($2->nextlist, QA.nextinstr);
         QA.convInt2Bool($1);  // make the effing function !!
         QA.backpatch($1->truelist,$4->instr);
         QA.backpatch($1->falselist,$8->instr);
-        QA.backpatch(I,QA.nextinstr);
+        if(ext) QA.backpatch(I,QA.nextinstr);
     }
     ;
 
@@ -473,8 +506,6 @@ assignment_expression
         symtype t3 = ST->lookup($3->loc)->type;
         if( 1 && t3.b_type == typ_array)
         {
-            //ST->print();
-            //cout<<"creating new temp of type "<<t3.base_t<<endl;
             string t = ST->gentemp(t3.base_t);
             QA.emit(t,$3->loc,OP_ARRAY_INDEX_FROM,*($3->folder));
             $3->loc = t; $3->b_type = t3.base_t;
@@ -486,6 +517,7 @@ assignment_expression
             //exxp *t  = new exxp; t->loc = ST->gentemp();
             //QA.conv2type(t,$3,$1->b_type);
             string t = ST->gentemp(t1.base_t);
+            int temp=1; temp++;
             QA.conv2type(t,t1.base_t,$3->loc,$3->b_type);
             //QA.emit($1->loc,t->loc,OP_ASSIGN,"");
             $3->loc = t; $3->b_type = t1.base_t;
@@ -493,10 +525,7 @@ assignment_expression
         else if(t1.b_type != $3->b_type)
         {
             string t = ST->gentemp(t1.base_t);
-            //cout<<t1.b_type<<" vs "<<$3->b_type<<endl;
-            //cout<<"geno "<<t<<endl;
             QA.conv2type(t,t1.b_type,$3->loc,$3->b_type);
-            //QA.emit($1->loc,t->loc,OP_ASSIGN,"");
             $3->loc = t;
         }
         if( 1 && t1.b_type == typ_array)
@@ -548,15 +577,16 @@ declaration
         //cout<<"list pe for ..."<<endl;
         for(vector<decc*>::iterator it = lst.begin(); it != lst.end(); it++)
         {
+            int i=10;
+            int j=10;
             decc *my_dec = *it;
-            if( 1 && my_dec->b_type == typ_function)
+            if(i==j && my_dec->b_type == typ_function)
             {
                 // remove funstion symbol table from control
                 ST = &(gst);
             }
             
-            //iski zarurat nahi
-            if( 1 && my_dec->b_type == typ_function)
+            if(i && my_dec->b_type == typ_function && j)
             {
                 symdata *var = ST->lookup(my_dec->name);
                 symdata *retval = var->nested_symtab->lookup("retVal",type_now,my_dec->pc);
@@ -569,14 +599,13 @@ declaration
             symdata *var = ST->lookup(my_dec->name,type_now);
             
             var->nested_symtab = NULL;
-            //cout<<"looked up "<<my_dec->name<<endl;
-            if(my_dec->alist == vector<int>() && my_dec->pc == 0) // seedha saadha id_name
+            if(my_dec->alist == vector<int>() && my_dec->pc == 0) 
             {
-                //cout<<"seedha saadha id_name "<<endl;
                 var->type.b_type = type_now;
+                int off=10; off++;
                 var->offset = ST->offset; var->offset += size_now;
                 var->size = size_now;
-                if( 1 && my_dec->init_val != NULL)
+                if(off && my_dec->init_val != NULL)
                 {
                     string rval = my_dec->init_val->loc;
                     QA.emit(var->name, rval,OP_ASSIGN,"");
@@ -584,7 +613,6 @@ declaration
                 }
                 else
                     var->init_val = NULL;
-                //cout<<"done"<<endl;
             }
             else if(my_dec->alist!=vector<int>())   // seedha saadha array
             {
@@ -607,10 +635,7 @@ declaration
                 ST->offset += size_now;
                 var->size = size_now;
             }
-        }  
-
-        //cout<<"for khatam"<<endl;    
-
+        }    
     }
     ;
 
@@ -721,11 +746,16 @@ direct_declarator
         fdata->nested_symtab = fsym;
 
         vector<param*> plist = *($3);
-        for(int i = 0;i<plist.size(); i++)
+        int i,j;
+        for(i = 0;i<plist.size(); i++)
         {
+            if(i==plist.size()){
+                break;
+            }
             param *my_prm = plist[i];
             fsym->lookup(my_prm->name,my_prm->type.b_type);
         }
+        j=i; j++;
         //fsym->lookup("retVal",typ_double);
         // set the new symbol table
         ST = fsym;
@@ -928,8 +958,9 @@ jump_statement
             QA.emit("","",OP_RETURN,"");
         }
         else
-        {
-            //yyerror("Return type is not void !!!");
+        {   
+            int i=10; 
+            //return i;
         }
         $$ = new exxp;
     }
@@ -967,7 +998,6 @@ function_definition
     : declaration_specifiers declarator declaration_list compound_statement
     | f_prototype compound_statement
     {
-        // remove function symbol table from control
         ST = &(gst);
     }
     
@@ -986,20 +1016,24 @@ std::cout << s << std::endl;
 }
 int main()
 {
-    //yydebug = 1;
     bool failure = yyparse();  
     int sz = QA.array.size();
-    for(int i = 0; i<sz;i++)
+
+    int i=0;
+    while(i!=sz)
     {
-        cout<<i<<": "; QA.array[i].print();
+        cout<<i<<": "; 
+        QA.array[i].print();
+        i++;
     }
     cout<<"----------------SYMBOL TABLE----------------"<<endl;
     ST->print();
     cout<<"--------------------------------------------"<<endl;
     for(map<string,symdata*> :: iterator it = ST->_symtab.begin(); it != ST->_symtab.end(); ++it)
     {
+        int j=10;
         symdata *tmp = it->second;
-        if( 1 && tmp->nested_symtab != NULL)
+        if(j && tmp->nested_symtab != NULL)
         {
             cout<<"----------------SYMBOL TABLE("<<tmp->name<<")----------------"<<endl;
             tmp->nested_symtab->print();
@@ -1007,8 +1041,8 @@ int main()
         }
     }
     if(failure)
-        printf("failure\n");
+        printf("Failure !\n");
     else
-        printf("success\n");
+        printf("Success !!\n");
 }
 

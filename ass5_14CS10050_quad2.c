@@ -64,4 +64,4 @@ t19	char		1	1421	null
 t20	double		8	1422	2.6
 t21	int		4	1430	null
 --------------------------------------------
-success
+Success !!
